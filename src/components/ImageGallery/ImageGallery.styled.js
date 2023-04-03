@@ -8,10 +8,4 @@ export const Gallery = styled.ul`
   margin: 0;
 `;
 
-export const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: ${p => {
-    return p.isHidden ? '0px' : '12px';
-  }};
-`;
+
