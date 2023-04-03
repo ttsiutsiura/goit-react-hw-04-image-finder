@@ -1,7 +1,10 @@
-export function ImageGalleryItem() {
+import { GalleryItem } from './ImageGalleryItem.styled';
+import { Image } from './ImageGalleryItem.styled';
+
+export function ImageGalleryItem({ id, image }) {
   return (
-    <li>
-      <img src="" alt="" />
-    </li>
+    <GalleryItem>
+      <Image src={image} alt="xxx" />
+    </GalleryItem>
   );
 }
