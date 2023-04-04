@@ -1,5 +1,6 @@
 import { SpinnerContainer } from 'components/Loader/Loader.styled';
 import { RotatingLines } from 'react-loader-spinner';
+import PropTypes from 'prop-types';
 
 export function Loader({ isLoading }) {
   return (
@@ -14,3 +15,7 @@ export function Loader({ isLoading }) {
     </SpinnerContainer>
   );
 }
+
+Loader.propTypes = {
+  isLoading: PropTypes.bool,
+};

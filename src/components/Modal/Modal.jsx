@@ -1,7 +1,7 @@
-import { Component } from 'react';
+import { Image } from './Modal.styled';
 import { Overlay } from './Modal.styled';
 import { ModalEl } from './Modal.styled';
-import { Image } from './Modal.styled';
+import { Component } from 'react';
 
 export class Modal extends Component {
   componentDidMount() {

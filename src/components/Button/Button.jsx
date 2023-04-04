@@ -1,4 +1,5 @@
 import { LoadMoreButton } from './Button.styled';
+import PropTypes from 'prop-types';
 
 export function Button({ areImages, areLastImages, onClick }) {
   if (areImages && !areLastImages) {
@@ -9,3 +10,9 @@ export function Button({ areImages, areLastImages, onClick }) {
     );
   }
 }
+
+Button.propTypes = {
+  areImages: PropTypes.bool.isRequired,
+  areLastImages: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};

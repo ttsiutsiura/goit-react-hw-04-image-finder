@@ -1,7 +1,7 @@
 import { Component } from 'react';
+import { SearchbarForm } from './Searchbar.styled';
 import { SearchbarInput } from './Searchbar.styled';
 import { SearchbarButton } from './Searchbar.styled';
-import { SearchbarForm } from './Searchbar.styled';
 
 export class Searchbar extends Component {
   state = {
@@ -15,14 +15,18 @@ export class Searchbar extends Component {
   };
 
   handleSubmit = evt => {
+    const searchQuery = this.state.searchQuery;
+
     evt.preventDefault();
 
-    this.props.onSubmit(this.state.searchQuery);
+    this.props.onSubmit(searchQuery);
 
     this.setState({ searchQuery: '' });
   };
 
   render() {
+    const searchQuery = this.state.searchQuery;
+
     return (
       <SearchbarForm onSubmit={this.handleSubmit}>
         <SearchbarInput
@@ -30,11 +34,16 @@ export class Searchbar extends Component {
           name="searchQuery"
           autoComplete="off"
           autoFocus="on"
-          value={this.state.searchQuery}
+          value={searchQuery}
           placeholder="Search images and photos"
           onChange={this.handleChange}
         />
-        <SearchbarButton type="submit">Search</SearchbarButton>
+        <SearchbarButton
+          type="submit"
+          disabled={searchQuery.trim() === '' ? true : false}
+        >
+          Search
+        </SearchbarButton>
       </SearchbarForm>
     );
   }

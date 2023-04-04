@@ -8,6 +8,7 @@ export const SearchbarForm = styled.form`
   cursor: pointer;
   display: flex;
   gap: 10px;
+  cursor: default;
 `;
 
 export const SearchbarInput = styled.input`
@@ -33,5 +34,10 @@ export const SearchbarButton = styled.button`
   :hover,
   :focus {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  :disabled {
+    box-shadow: none;
+    cursor: default;
   }
 `;

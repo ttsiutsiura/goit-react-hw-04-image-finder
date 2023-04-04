@@ -1,10 +1,10 @@
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import { Searchbar } from '../Searchbar/Searchbar';
-import { ImageGallery } from '../ImageGallery/ImageGallery';
+import { Modal } from 'components/Modal/Modal';
 import { Header } from './App.styled';
 import { Component } from 'react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Modal } from 'components/Modal/Modal';
+import { ImageGallery } from '../ImageGallery/ImageGallery';
 
 export class App extends Component {
   state = {
@@ -32,7 +32,6 @@ export class App extends Component {
           <Searchbar onSubmit={this.handleSumbit} />
         </Header>
         <main>
-          <img src="" alt="" />
           <ImageGallery
             query={this.state.query}
             onImageClick={this.toggleModal}
