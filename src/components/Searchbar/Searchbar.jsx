@@ -1,50 +1,47 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { SearchbarForm } from './Searchbar.styled';
 import { SearchbarInput } from './Searchbar.styled';
 import { SearchbarButton } from './Searchbar.styled';
+import PropTypes from 'prop-types';
 
-export class Searchbar extends Component {
-  state = {
-    searchQuery: '',
-  };
+export function Searchbar({ onSubmit }) {
+  const [query, setQuery] = useState('');
 
-  handleChange = evt => {
+  const handleChange = evt => {
     const { value } = evt.target;
 
-    this.setState({ searchQuery: value });
+    setQuery(value);
   };
 
-  handleSubmit = evt => {
-    const searchQuery = this.state.searchQuery;
-
+  const handleSubmit = evt => {
     evt.preventDefault();
 
-    this.props.onSubmit(searchQuery);
+    onSubmit(query);
 
-    this.setState({ searchQuery: '' });
+    setQuery('');
   };
 
-  render() {
-    const searchQuery = this.state.searchQuery;
-
-    return (
-      <SearchbarForm onSubmit={this.handleSubmit}>
-        <SearchbarInput
-          type="text"
-          name="searchQuery"
-          autoComplete="off"
-          autoFocus="on"
-          value={searchQuery}
-          placeholder="Search images and photos"
-          onChange={this.handleChange}
-        />
-        <SearchbarButton
-          type="submit"
-          disabled={searchQuery.trim() === '' ? true : false}
-        >
-          Search
-        </SearchbarButton>
-      </SearchbarForm>
-    );
-  }
+  return (
+    <SearchbarForm onSubmit={handleSubmit}>
+      <SearchbarInput
+        type="text"
+        name="searchQuery"
+        autoComplete="off"
+        autoFocus="on"
+        value={query}
+        placeholder="Search images and photos"
+        onChange={handleChange}
+      />
+      <SearchbarButton
+        type="submit"
+        disabled={query.trim() === '' ? true : false}
+      >
+        Search
+      </SearchbarButton>
+    </SearchbarForm>
+  );
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};

@@ -3,112 +3,108 @@ import { toast } from 'react-toastify';
 import { Button } from 'components/Button/Button';
 import { Loader } from 'components/Loader/Loader';
 import { Gallery } from './ImageGallery.styled';
-import { Component } from 'react';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
+import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
-export class ImageGallery extends Component {
-  state = {
-    page: 1,
-    images: [],
-    areLastImages: false,
-    isLoading: false,
-  };
+export function ImageGallery({ query, onImageClick }) {
+  const [page, setPage] = useState(2);
+  const [images, setImages] = useState([]);
+  const [areLastImages, setAreLastImages] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.query !== this.props.query) {
-      this.setState({ page: 1, areLastImages: false });
-      this.setState({ isLoading: true });
+  const isMounted = useRef(false);
 
-      setTimeout(() => {
-        const query = this.props.query;
-        const page = this.state.page;
-
-        imagesAPI.fetchImages(query, page).then(data => {
-          this.setState({ isLoading: false });
-          this.setState({ images: data.hits });
-
-          window.scroll({
-            top: 0,
-            behavior: 'smooth',
-          });
-
-          this.setState(prevState => {
-            return { page: prevState.page + 1 };
-          });
-
-          if (data.totalHits <= 12) {
-            this.setState({ areLastImages: true });
-          }
-
-          if (data.totalHits > 0) {
-            toast.info(`Hooray! We found ${data.totalHits} images.`);
-          }
-
-          if (data.totalHits === 0) {
-            toast.error(
-              'Sorry, there are no images matching your search query. Please try again.'
-            );
-          }
-        });
-      }, 1000);
+  useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
     }
-  }
 
-  loadMore = () => {
-    this.setState({ isLoading: true });
+    setAreLastImages(false);
+    setIsLoading(true);
 
     setTimeout(() => {
-      const query = this.props.query;
-      const page = this.state.page;
+      imagesAPI.fetchImages(query, 1).then(data => {
+        setPage(2);
+        setImages(data.hits);
+        setIsLoading(false);
 
+        window.scroll({
+          top: 0,
+          behavior: 'smooth',
+        });
+
+        if (data.totalHits <= 12) {
+          setAreLastImages(true);
+        }
+
+        if (data.totalHits > 0) {
+          toast.info(`Hooray! We found ${data.totalHits} images.`);
+        }
+
+        if (data.totalHits === 0) {
+          toast.error(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
+        }
+      });
+    }, 1000);
+  }, [query]);
+
+  const loadMore = () => {
+    setIsLoading(true);
+
+    setTimeout(() => {
       imagesAPI.fetchImages(query, page).then(data => {
-        this.setState({ isLoading: false });
+        setIsLoading(false);
 
-        if (data.totalHits - this.state.images.length <= 12) {
+        if (data.totalHits - images.length <= 12) {
           toast.error(
             "We're sorry, but you've reached the end of search results."
           );
 
-          this.setState({ areLastImages: true });
+          setAreLastImages(true);
         }
 
-        this.setState({
-          images: [...this.state.images, ...data.hits.map(image => image)],
+        setImages(images => {
+          return [...images, ...data.hits.map(image => image)];
         });
       });
 
-      this.setState(prevState => {
-        return { page: prevState.page + 1 };
+      setPage(value => {
+        return value + 1;
       });
     }, 1000);
   };
 
-  render() {
-    const images = this.state.images;
-
-    return (
-      <>
-        <Gallery>
-          {images.map(({ id, webformatURL, largeImageURL, tags }) => (
-            <ImageGalleryItem
-              key={id}
-              image={webformatURL}
-              largeImage={largeImageURL}
-              onImageClick={this.props.onImageClick}
-              tags={tags}
-            />
-          ))}
-        </Gallery>
-
-        {!this.state.isLoading && (
-          <Button
-            areImages={images.length > 0}
-            areLastImages={this.state.areLastImages}
-            onClick={this.loadMore}
+  return (
+    <>
+      <Gallery>
+        {images.map(({ id, webformatURL, largeImageURL, tags }) => (
+          <ImageGalleryItem
+            key={id}
+            image={webformatURL}
+            largeImage={largeImageURL}
+            onImageClick={onImageClick}
+            tags={tags}
           />
-        )}
-        <Loader isLoading={this.state.isLoading} />
-      </>
-    );
-  }
+        ))}
+      </Gallery>
+
+      {!isLoading && (
+        <Button
+          areImages={images.length > 0}
+          areLastImages={areLastImages}
+          onClick={loadMore}
+        />
+      )}
+      <Loader isLoading={isLoading} />
+    </>
+  );
 }
+
+ImageGallery.propTypes = {
+  query: PropTypes.string.isRequired,
+  onImageClick: PropTypes.func.isRequired,
+};

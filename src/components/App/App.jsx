@@ -3,45 +3,42 @@ import { ToastContainer } from 'react-toastify';
 import { Searchbar } from '../Searchbar/Searchbar';
 import { Modal } from 'components/Modal/Modal';
 import { Header } from './App.styled';
-import { Component } from 'react';
+import { useState } from 'react';
 import { ImageGallery } from '../ImageGallery/ImageGallery';
+import PropTypes from 'prop-types';
 
-export class App extends Component {
-  state = {
-    query: '',
-    showModal: false,
-    currentImage: null,
+export function App() {
+  const [query, setQuery] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [currentImage, setCurrentImage] = useState(null);
+
+  const handleSumbit = query => {
+    setQuery(query);
   };
 
-  handleSumbit = query => {
-    this.setState({ query });
+  const toggleModal = id => {
+    setShowModal(state => {
+      return !state;
+    });
+
+    setCurrentImage(id);
   };
 
-  toggleModal = id => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-
-    this.setState({ currentImage: id });
-  };
-
-  render() {
-    return (
-      <>
-        <Header>
-          <Searchbar onSubmit={this.handleSumbit} />
-        </Header>
-        <main>
-          <ImageGallery
-            query={this.state.query}
-            onImageClick={this.toggleModal}
-          />
-        </main>
-        <ToastContainer autoClose={2000} />
-        {this.state.showModal && (
-          <Modal onClose={this.toggleModal} image={this.state.currentImage} />
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      <Header>
+        <Searchbar onSubmit={handleSumbit} />
+      </Header>
+      <main>
+        <ImageGallery query={query} onImageClick={toggleModal} />
+      </main>
+      <ToastContainer autoClose={2000} />
+      {showModal && <Modal onClose={toggleModal} image={currentImage} />}
+    </>
+  );
 }
+
+App.propTypes = {
+  query: PropTypes.string,
+  id: PropTypes.number,
+};
